@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTopMensalArtistasTable extends Migration
+class CreateTopSemanalMusicasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateTopMensalArtistasTable extends Migration
      */
     public function up()
     {
-        Schema::create('top_mensal_artistas', function (Blueprint $table) {
+        Schema::create('top_semanal_musicas', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('id_artista')->unsigned()->nullable();
-            $table->foreign('id_artista')->references('idV')->on('artistas');
+            $table->bigInteger('id_musica')->unsigned();
+            $table->foreign('id_musica')->references('id')->on('musicas');
             $table->string('data_ref')->nullable();
             $table->string('nome')->nullable();
             $table->string('posicao')->nullable();
@@ -33,6 +33,6 @@ class CreateTopMensalArtistasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('top_mensal_artistas');
+        Schema::dropIfExists('top_semanal_musicas');
     }
 }

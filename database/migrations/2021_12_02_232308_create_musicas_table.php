@@ -17,12 +17,12 @@ class CreateMusicasTable extends Migration
             $table->id();
             $table->string('idV')->nullable();
             $table->bigInteger('id_artista')->unsigned();
-            $table->foreign('id_artista')->references('idV')->on('artistas');
+            $table->foreign('id_artista')->references('id')->on('artistas');
             $table->bigInteger('id_album')->unsigned()->nullable();
-            $table->foreign('id_album')->references('idV')->on('albuns');
+            $table->foreign('id_album')->references('id')->on('albuns');
             $table->string('nome')->nullable();
             $table->string('url')->nullable();
-            $table->string('lançamento')->nullable();
+            $table->string('lancamento')->nullable();
             $table->timestamps();
         });
     }

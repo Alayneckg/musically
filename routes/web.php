@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Controller;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +15,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::get('/', [Controller::class, 'dashboard']);
+Route::get('/popular', [Controller::class, 'popularPagina']);
+Route::post('/popular-banco', [Controller::class, 'popularBanco']);
+Route::get('/banco', [Controller::class, 'banco']);
+Route::get('/relatorio-criar', [Controller::class, 'relatorioCriar']);
+Route::post('/relatorio-post', [Controller::class, 'relatorioPost']);
+Route::get('/relatorios', [Controller::class, 'relatorios']);
+Route::get('/sobre', [Controller::class, 'sobre']);
+

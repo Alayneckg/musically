@@ -19,6 +19,7 @@ class CreateArtistasTable extends Migration
             $table->string('nome')->nullable();
             $table->string('imagem')->nullable();
             $table->string('views')->nullable();
+            $table->string('url')->nullable();
             $table->timestamps();
         });
     }
