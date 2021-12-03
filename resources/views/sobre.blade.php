@@ -6,36 +6,45 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="left-image wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.5s">
-                        <img src="assets/images/about-left-image.png" alt="">
+                        <img src="../img/Sobre.png" alt="">
                     </div>
                 </div>
                 <div class="col-lg-6 align-self-center wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.5s">
                     <div class="section-heading">
-                        <h6>Quem somos</h6>
-                        <h2>O <span>Grupo</span></h2>
+                        <!-- <h6>Quem somos</h6> -->
+                        <h2>Quem somos</h2>
                     </div>
                     <div class="row">
-                        <div class="col-lg-4 col-sm-4">
-                        <div class="about-item">
-                                <h4>750+</h4>
-                                <h6>projects finished</h6>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-sm-4">
+                        <div class="col-lg-6 col-sm-6">
                             <div class="about-item">
-                                <h4>340+</h4>
-                                <h6>happy clients</h6>
+                                <h4>Alayne Garufe</h4>
+                                <h5>2017002022</h5>
+                                <br>
+                                <a href="https://www.linkedin.com/in/alayne-garufe/" target="_blank" style="text-align: center;">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/1384/1384072.png" style="width: 40px">
+                                </a>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-sm-4">
+                        <div class="col-lg-6 col-sm-6">
+                            <div class="about-item">
+                                <h4>Caique Duarte</h4>
+                                <h5>2016001648</h5>
+                                <br>
+                                <a href="https://www.linkedin.com/in/caiquesfduarte/" target="_blank" style="text-align: center;">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/1384/1384072.png" style="width: 40px">
+                                </a>
+
+                            </div>
+                        </div>
+                        <!-- <div class="col-lg-4 col-sm-4">
                             <div class="about-item">
                                 <h4>128+</h4>
                                 <h6>awards</h6>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
-                    <p><a rel="nofollow" href="https://templatemo.com/tm-563-seo-dream" target="_parent">SEO Dream</a> is free digital marketing CSS template provided by TemplateMo website. You are allowed to use this template for your business websites. Please DO NOT redistribute this template ZIP file on any Free CSS collection websites. You may contact us for more information. Thank you.</p>
-                    <div class="main-green-button"><a href="#">Discover company</a></div>
+                    <!-- <p><a rel="nofollow" href="https://templatemo.com/tm-563-seo-dream" target="_parent">SEO Dream</a> is free digital marketing CSS template provided by TemplateMo website. You are allowed to use this template for your business websites. Please DO NOT redistribute this template ZIP file on any Free CSS collection websites. You may contact us for more information. Thank you.</p>
+                    <div class="main-green-button"><a href="#">Discover company</a></div> -->
                 </div>
             </div>
         </div>

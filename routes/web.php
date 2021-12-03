@@ -25,6 +25,6 @@ Route::post('/popular-banco', [Controller::class, 'popularBanco']);
 Route::get('/banco', [Controller::class, 'banco']);
 Route::get('/relatorio-criar', [Controller::class, 'relatorioCriar']);
 Route::post('/relatorio-post', [Controller::class, 'relatorioPost']);
-Route::get('/relatorios', [Controller::class, 'relatorios']);
+Route::get('/relatorios', [Controller::class, 'relatorios'])->name('relatorios');
 Route::get('/sobre', [Controller::class, 'sobre']);
 

@@ -11,7 +11,7 @@ class TopSemanalArtista extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id_artista', 'data_ref', 'nome', 'posicao', 'views', 'alcance'
+        'artista_id', 'data_ref', 'nome', 'posicao', 'views', 'alcance'
     ];
 
     public function artista()

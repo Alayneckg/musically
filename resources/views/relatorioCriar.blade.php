@@ -78,6 +78,15 @@
                                                 <input type="checkbox" name="switch_artista" id="switch_artista" onclick="checkArtista(this.checked)">
                                                 <label for="switch_artista"></label>
                                             </div>
+                                            <br>
+                                            <fieldset style="width:85%">
+                                                <span class="texto_artista">Selecione artista </span>
+                                                <select name="artista" id="artista_select" placeholder="Name" disabled>
+                                                    @foreach($artistas as $artista)
+                                                        <option value="{{ $artista->id }}">{{ $artista->nome }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </fieldset>
                                             <hr>
                                             <span style="color: #088ec3; font-weight:bold">Música</span>
                                             <br>
@@ -216,10 +225,12 @@
             if(click == true){
                 document.querySelectorAll('span.texto_artista').forEach(e => e.style.color = "black");
                 document.querySelectorAll('input.check_artista').forEach(e => e.disabled = false);
+                document.getElementById('artista_select').disabled = false;
             }else{
                 document.querySelectorAll('span.texto_artista').forEach(e => e.style.color = "grey");
                 document.querySelectorAll('input.check_artista').forEach(e => e.disabled = true);
                 document.querySelectorAll('input.check_artista').forEach(e => e.checked = false);
+                document.getElementById('artista_select').disabled = true;
             }
         };
         function checkTop(click){

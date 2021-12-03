@@ -16,10 +16,10 @@ class CreateMusicasTable extends Migration
         Schema::create('musicas', function (Blueprint $table) {
             $table->id();
             $table->string('idV')->nullable();
-            $table->bigInteger('id_artista')->unsigned();
-            $table->foreign('id_artista')->references('id')->on('artistas');
-            $table->bigInteger('id_album')->unsigned()->nullable();
-            $table->foreign('id_album')->references('id')->on('albuns');
+            $table->bigInteger('artista_id')->unsigned();
+            $table->foreign('artista_id')->references('id')->on('artistas');
+            $table->bigInteger('album_id')->unsigned()->nullable();
+            $table->foreign('album_id')->references('id')->on('albuns');
             $table->string('nome')->nullable();
             $table->string('url')->nullable();
             $table->string('lancamento')->nullable();

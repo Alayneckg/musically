@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Artista;
+use App\Models\Musica;
 use App\Models\TopSemanalAlbum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,7 @@ class Album extends Model
     protected $table = 'albuns';
 
     protected $fillable = [
-        'idV', 'id_artista', 'nome', 'url', 'lancamento'
+        'idV', 'artista_id', 'nome', 'url', 'lancamento'
     ];
 
     public function artista()
@@ -22,12 +23,12 @@ class Album extends Model
     	return $this->belongsTo(Artista::class);
     }
 
-    public function musica()
+    public function musicas()
     {
     	return $this->hasMany(Musica::class);
     }
 
-    public function top_album()
+    public function top_albuns()
     {
     	return $this->hasMany(TopSemanalAlbum::class);
     }

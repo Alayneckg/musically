@@ -6,6 +6,7 @@ use DateTime;
 use App\Models\Album;
 use App\Models\Musica;
 use App\Models\Artista;
+use App\Models\Relatorios;
 use Illuminate\Http\Request;
 use App\Models\TopSemanalAlbum;
 use App\Models\TopSemanalMusica;
@@ -22,6 +23,7 @@ class Controller extends BaseController
 
     public function dashboard()
     {
+
         return view('welcome');
 
     }
@@ -61,12 +63,14 @@ class Controller extends BaseController
                             if(Musica::where(['idV'=>$music['id']])->exists()){
                                 // Música já existe
                             }else{
-                                Musica::create([
-                                    'idV' => $music['id'],
-                                    'id_artista' => $artistaCriado['id'],
-                                    'nome' => $music['desc'],
-                                    'url' => $music['url'],
-                                ]);
+                                if($music['id'] == $data['id']){
+                                    Musica::create([
+                                        'idV' => $music['id'],
+                                        'artista_id' => $artistaCriado['id'],
+                                        'nome' => $music['desc'],
+                                        'url' => $music['url'],
+                                    ]);
+                                }
                             }
                         }
                     }
@@ -77,7 +81,7 @@ class Controller extends BaseController
                             }else{
                                 Album::create([
                                     'idV' => $album['id'],
-                                    'id_artista' => $artistaCriado['id'],
+                                    'artista_id' => $artistaCriado['id'],
                                     'nome' => $album['desc'],
                                     'url' => $album['url'],
                                     'lancamento' => $album['year'],
@@ -87,18 +91,22 @@ class Controller extends BaseController
                         }
                     }
                     $date = $dataPeriod[$aux]['mus']['week']['period']['year'].'-'.$dataPeriod[$aux]['mus']['week']['period']['week'];
-                    if(TopSemanalMusica::where(['id_musica'=>$data['id']])->where(['data_ref'=>$date])->exists()){
+                    if(TopSemanalMusica::where(['musica_id'=>$data['id']])->where(['data_ref'=>$date])->exists()){
                         // Top já existe
                     }else{
                         $musicaAux = (Musica::where(['idV'=>$data['id']])->first());
-                        TopSemanalMusica::create([
-                            'id_musica' => $musicaAux['id'],
-                            'data_ref' => $date,
-                            'nome' => $data['name'],
-                            'posicao' => "$key",
-                            'views' => $data['views'],
-                            'alcance' => 'nacional',
-                        ]);
+                        // dd($musicaAux->artista->id)
+                        if(isset($musicaAux['id'])){
+                            TopSemanalMusica::create([
+                                'musica_id' => $musicaAux['id'],
+                                'artista_id' => $musicaAux->artista->id,
+                                'data_ref' => $date,
+                                'nome' => $data['name'],
+                                'posicao' => $key + 1,
+                                'views' => $data['views'],
+                                'alcance' => 'nacional',
+                            ]);
+                        }
                     }
                 }
             }
@@ -108,26 +116,124 @@ class Controller extends BaseController
 
     public function relatorioCriar()
     {
-
-        return view('relatorioCriar');
+        $artistas = Artista::get();
+        return view('relatorioCriar', ['artistas'=>$artistas]);
     }
 
     public function relatorioPost(Request $request)
     {
-        dd($request);
-        return view('relatorioPost');
+        // artista
+        if(isset($request['artista'])){
+            $artista = $request['artista'];
+        }else{
+            $artista = null;
+        }
+        $create = [];
+        $array = [
+            "discografia_artista",  "top_semanal_artista",  "grafico_artista",  "discografia_album", "top_semanal_album",
+            "grafico_album", "coluna_semanal_musica",  "coluna_semanal_artista",  "coluna_semanal_album",  "top_1_musica",
+        ];
+        foreach($array as $data){
+            if(isset($request["$data"])){
+                $create[$data] = true;
+            }else{
+                $create[$data] = false;
+            }
+        }
+        $create['artista_id'] = $artista;
+
+        Relatorios::create($create);
+
+        return redirect(route('relatorios'));
+
     }
 
     public function relatorios()
     {
+        $relatorios = Relatorios::get();
+        $relatorio_completo = [];
+        $aux = 0;
+        foreach($relatorios as $relatorio){
+            $relatorio_completo[$aux]['id'] = $relatorio->id;
+            $relatorio_completo[$aux]['created_at'] = $relatorio->created_at;
+            if(isset($relatorio->artista_id)){
+                $relatorio_completo[$aux]['artista'] = $relatorio->artista->nome;
+                // Discografia_artista
+                if($relatorio->discografia_artista == 1){
+                    $relatorio_completo[$aux]['discografia_artista'] = Musica::where('artista_id', $relatorio->artista_id)->get();
+                }
+                // Top_semanal_artista
+                if($relatorio->top_semanal_artista == 1){
+                    $relatorio_completo[$aux]['top_semanal_artista'] = TopSemanalMusica::where('artista_id', $relatorio->artista_id)->get();
+                }
+                // Grafico_artista
+                if($relatorio->grafico_artista == 1){
+                    $frequencia = TopSemanalMusica::where('artista_id', $relatorio->artista_id)->get();
+                    $hit = [];
+                    if(isset($frequencia) && count($frequencia) > 1){
+                        foreach($frequencia as $key2 => $paradas){
+                            $hit[$key2]['pos'] = $paradas['posicao'];
+                            $hit[$key2]['data_ref'] = $paradas['data_ref'];
+                        }
+                    }
+                    $relatorio_completo[$aux]['grafico_artista'] = $hit;
+                }
+                // Discografia_album
+                if($relatorio->discografia_album == 1){
+                    $relatorio_completo[$aux]['discografia_album'] = Album::where('artista_id', $relatorio->artista_id)->get();
+                }
+                // Top_semanal_album
+                if($relatorio->top_semanal_album == 1){
+                    $relatorio_completo[$aux]['top_semanal_album'] = TopSemanalAlbum::where('artista_id', $relatorio->artista_id)->get();
+                }
+                // Grafico_album
+                if($relatorio->grafico_album == 1){
+                    $frequencia = TopSemanalAlbum::where('artista_id', $relatorio->artista_id)->get();
+                    $hit = [];
+                    if(isset($frequencia) && count($frequencia) > 1){
+                        foreach($frequencia as $key2 => $paradas){
+                            $hit[$key2]['pos'] = $paradas['posicao'];
+                            $hit[$key2]['data_ref'] = $paradas['data_ref'];
+                        }
+                    }
+                    $relatorio_completo[$aux]['grafico_album'] = $hit;
+                }
+            }
+            // Coluna_semanal_musica
+            if($relatorio->coluna_semanal_musica == 1){
+                $relatorio_completo[$aux]['coluna_semanal_musica'] = TopSemanalMusica::select('musica_id', TopSemanalMusica::raw('COUNT(musica_id) AS occurrences'))->groupBy('musica_id')
+                ->orderBy('occurrences', 'DESC')->limit(5)->get();;
+            }
+            // Coluna_semanal_artista
+            if($relatorio->coluna_semanal_artista == 1){
+                $relatorio_completo[$aux]['coluna_semanal_artista'] = TopSemanalArtista::select('artista_id', TopSemanalArtista::raw('COUNT(artista_id) AS occurrences'))->groupBy('artista_id')
+                ->orderBy('occurrences', 'DESC')->limit(5)->get();;
+            }
+            // Coluna_semanal_album
+            if($relatorio->coluna_semanal_album == 1){
+                $relatorio_completo[$aux]['coluna_semanal_album'] = TopSemanalAlbum::select('album_id', TopSemanalAlbum::raw('COUNT(album_id) AS occurrences'))->groupBy('album_id')
+                ->orderBy('occurrences', 'DESC')->limit(5)->get();;
+            }
 
-        return view('relatorios');
+            // Top_1_musica
+            if($relatorio->top_1_musica == 1){
+                $relatorio_completo[$aux]['top_1_musica'] = TopSemanalMusica::where('posicao', 1)->get();
+            }
+            $aux++;
+        }
+        // dd($relatorio_completo);
+        return view('relatorios', ['relatorios'=>$relatorio_completo]);
     }
 
     public function banco()
     {
-
-        return view('banco');
+        $artistas = Artista::get();
+        $musicas = Musica::get();
+        $albuns = Album::get();
+        $top_artistas = TopSemanalArtista::get();
+        $top_musicas = TopSemanalMusica::get();
+        $top_albuns = TopSemanalAlbum::get();
+        return view('banco', ['artistas' => $artistas, 'musicas' => $musicas, 'albuns' => $albuns, 'top_artistas' => $top_artistas, 'top_musicas' => $top_musicas, 'top_albuns' => $top_albuns]);
     }
 
     public function sobre()

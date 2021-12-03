@@ -15,8 +15,10 @@ class CreateTopSemanalMusicasTable extends Migration
     {
         Schema::create('top_semanal_musicas', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('id_musica')->unsigned();
-            $table->foreign('id_musica')->references('id')->on('musicas');
+            $table->bigInteger('musica_id')->unsigned();
+            $table->foreign('musica_id')->references('id')->on('musicas');
+            $table->bigInteger('artista_id')->unsigned();
+            $table->foreign('artista_id')->references('id')->on('artistas');
             $table->string('data_ref')->nullable();
             $table->string('nome')->nullable();
             $table->string('posicao')->nullable();

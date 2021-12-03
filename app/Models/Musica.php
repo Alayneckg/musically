@@ -13,7 +13,7 @@ class Musica extends Model
     use HasFactory;
 
     protected $fillable = [
-        'idV', 'id_artista', 'id_album', 'nome', 'url', 'lancamento'
+        'idV', 'artista_id', 'album_id', 'nome', 'url', 'lancamento'
     ];
 
     public function artista()
@@ -26,7 +26,7 @@ class Musica extends Model
     	return $this->belongsTo(Album::class);
     }
 
-    public function top_musica()
+    public function top_musicas()
     {
     	return $this->hasMany(TopSemanalMusica::class);
     }
