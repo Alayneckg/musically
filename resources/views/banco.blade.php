@@ -21,13 +21,16 @@
             max-width: 100%;
             width: 90%;
         }
+        .compact{
+            text-align: center;
+        }
     </style>
     <div id="about" class="about-us section">
         <div class="container">
             <div class="col-lg-12 align-self-center wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.5s">
                 <div class="row">
-                    <div class="section-heading" style="text-align: center;">
-                        <h2>Banco de <span>Dados</span></h2>
+                    <div class="section-heading" style="text-align: center; display:inline-block">
+                        <h2 style="display:inline-block;">Banco de <span>Dados</span></h2> <span class="main-blue-button" style="float:right;"><a style="background-color: #005678" href="/popular">Popular Banco</a></span>
                     </div>
                     <br>
                     <br>
@@ -131,12 +134,13 @@
                         <br>
                     </div>
                     <div class="col-lg-12">
-                        <h4>Top mensal artistas</h4>
+                        <h4>Top semanal artistas</h4>
                         @isset($top_artistas)
                             <table class="compact" id="table_top_artistas">
                                 <thead>
                                     <tr>
                                         <th>Artista </th>
+                                        <th>Data de Referência </th>
                                         <th>Posição </th>
                                         <th>Views</th>
                                         <!-- <th>alcance</th> -->
@@ -146,6 +150,7 @@
                                     @foreach($top_artistas as $top_artista)
                                         <tr>
                                             <td>{{ $top_artista->nome }}</td>
+                                            <td>{{ $top_artista->data_ref }}</td>
                                             <td>{{ $top_artista->posicao }}</td>
                                             <td>{{ $top_artista->views }}</td>
                                             <!-- <td>{{ $top_artista->alcance }}</td> -->
@@ -161,13 +166,14 @@
                         <br>
                     </div>
                     <div class="col-lg-12">
-                        <h4>Top mensal musicas</h4>
+                        <h4>Top semanal musicas</h4>
                         @isset($top_musicas)
                             <table class="compact" id="table_top_musicas">
                                 <thead>
                                     <tr>
                                         <th>Musica </th>
                                         <th>Artista </th>
+                                        <th>Data de Referência </th>
                                         <th>Posição </th>
                                         <th>Views</th>
                                         <!-- <th>alcance</th> -->
@@ -178,6 +184,7 @@
                                         <tr>
                                             <td>{{ $top_musica->nome }}</td>
                                             <td>{{ $top_musica->musica->artista->nome }}</td>
+                                            <td>{{ $top_musica->data_ref }}</td>
                                             <td>{{ $top_musica->posicao }}</td>
                                             <td>{{ $top_musica->views }}</td>
                                             <!-- <td>{{ $top_musica->alcance }}</td> -->
@@ -193,13 +200,14 @@
                         <br>
                     </div>
                     <div class="col-lg-12">
-                        <h4>Top mensal albuns</h4>
+                        <h4>Top semanal albuns</h4>
                         @isset($top_albuns)
                             <table class="compact" id="table_top_albuns">
                                 <thead>
                                     <tr>
                                         <th>Musica </th>
                                         <th>Artista </th>
+                                        <th>Data de Referência </th>
                                         <th>Posição </th>
                                         <th>Views</th>
                                         <!-- <th>Alcance</th> -->
@@ -210,6 +218,7 @@
                                         <tr>
                                             <td>{{ $top_album->nome }}</td>
                                             <td>{{ $top_album->artista->nome }}</td>
+                                            <td>{{ $top_album->data_ref }}</td>
                                             <td>{{ $top_album->posicao }}</td>
                                             <td>{{ $top_album->views }}</td>
                                             <!-- <td>{{ $top_album->alcance }}</td> -->
@@ -231,7 +240,6 @@
         </div>
     </div>
 
-@include('footer')
 @include('scripts')
     <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <script>

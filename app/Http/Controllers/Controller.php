@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use DateTime;
+use DateInterval;
+use DatePeriod;
 use App\Models\Album;
 use App\Models\Musica;
 use App\Models\Artista;
@@ -31,87 +33,203 @@ class Controller extends BaseController
     public function popularPagina()
     {
 
+        return view('popular');
+
     }
 
-    public function popularBanco($dados)
+    public function popularBanco(Request $request)
+
     {
-        // Dados precisa ter: Qual top Semanal quer popular, limit, range do periodo e se quer adicionar a musica do top ou todas musicas do cantor
-        $periods = ['202101', '202102', '202103', '202104'];
-        $dataPeriod = [];
+        $limite = $request['limite'];
+        $inicio = (new DateTime((explode(' - ', $request['date']))[0]))->format("Y-m-d");
+        $fim = (new DateTime((explode(' - ', $request['date']))[1]))->format("Y-m-d");
+        $period = new DatePeriod(
+            new DateTime($inicio),
+            new DateInterval('P1D'),
+            new DateTime($fim),
+        );
+
+        $dates = [];
+        foreach ($period as $value) {
+            $dates[$value->format("Y-W")] = $value->format("YW");
+        }
+
         $aux = 0;
-        // Buscando por ranking de música (TopSemanalMusica)
-        foreach($periods as $period){
-            $dataPeriod[$aux] = (Http::get("https://api.vagalume.com.br/rank.php?apikey=660a4395f992ff67786584e238f501aa&type=mus&period=week&periodVal=$period&scope=all,lyrics&limit3"))->json();
-            // dd($dataPeriod[$aux]);
-            if(isset($dataPeriod[$aux]['mus']['week']['all'])){
-                foreach($dataPeriod[$aux]['mus']['week']['all'] as $key => $data){
-                    $artista = ((Http::get($data['art']['url'].'index.js'))->json())['artist'];
-                    if(Artista::where(['idV'=>$artista['id']])->exists()){
-                        // Artista já existe
-                        $artista = Artista::where(['idV'=>$artista['id']])->get();
-                    }else{
-                        $artistaCriado = Artista::create([
-                            'idV' => $artista['id'],
-                            'nome' => $artista['desc'],
-                            'imagem' => 'https://www.vagalume.com.br'.$artista['pic_small'],
-                            'url' => $artista['url'],
-                            'views' => $artista['rank']['views'],
-                        ]);
-                    };
-                    if(isset($artista['lyrics']['item'])){
-                        foreach($artista['lyrics']['item'] as $music){
-                            if(Musica::where(['idV'=>$music['id']])->exists()){
-                                // Música já existe
-                            }else{
-                                if($music['id'] == $data['id']){
-                                    Musica::create([
-                                        'idV' => $music['id'],
-                                        'artista_id' => $artistaCriado['id'],
-                                        'nome' => $music['desc'],
-                                        'url' => $music['url'],
-                                    ]);
+        if($request['tabela'] == 'top_semanal_musica'){
+            foreach($dates as $period){
+                $dataPeriod[$aux] = (Http::get("https://api.vagalume.com.br/rank.php?apikey=660a4395f992ff67786584e238f501aa&type=mus&period=week&periodVal=$period&scope=all,lyrics&limit$limite"))->json();
+                if(isset($dataPeriod[$aux]['mus']['week']['all'])){
+                    foreach($dataPeriod[$aux]['mus']['week']['all'] as $key => $data){
+                        $artista = ((Http::get($data['art']['url'].'index.js'))->json())['artist'];
+                        if(Artista::where(['idV'=>$artista['id']])->exists()){
+                            // Artista já existe
+                            $artista = Artista::where(['idV'=>$artista['id']])->get();
+                        }else{
+                            $artistaCriado = Artista::create([
+                                'idV' => $artista['id'],
+                                'nome' => $artista['desc'],
+                                'imagem' => 'https://www.vagalume.com.br'.$artista['pic_small'],
+                                'url' => $artista['url'],
+                                'views' => $artista['rank']['views'],
+                            ]);
+                        };
+                        if(isset($artista['lyrics']['item'])){
+                            foreach($artista['lyrics']['item'] as $music){
+                                if(Musica::where(['idV'=>$music['id']])->exists()){
+                                    // Música já existe
+                                }else{
+                                    if($music['id'] == $data['id']){
+                                        Musica::create([
+                                            'idV' => $music['id'],
+                                            'artista_id' => $artistaCriado['id'],
+                                            'nome' => $music['desc'],
+                                            'url' => $music['url'],
+                                        ]);
+                                    }
                                 }
                             }
                         }
-                    }
-                    if(isset($artista['albums']['item'])){
-                        foreach($artista['albums']['item'] as $album){
-                            if(Album::where(['idV'=>$album['id']])->exists()){
-                                // Album já existe
-                            }else{
-                                Album::create([
-                                    'idV' => $album['id'],
-                                    'artista_id' => $artistaCriado['id'],
-                                    'nome' => $album['desc'],
-                                    'url' => $album['url'],
-                                    'lancamento' => $album['year'],
-                                ]);
+                        if(isset($artista['albums']['item'])){
+                            foreach($artista['albums']['item'] as $album){
+                                if(Album::where(['idV'=>$album['id']])->exists()){
+                                    // Album já existe
+                                }else{
+                                    Album::create([
+                                        'idV' => $album['id'],
+                                        'artista_id' => $artistaCriado['id'],
+                                        'nome' => $album['desc'],
+                                        'url' => $album['url'],
+                                        'lancamento' => $album['year'],
+                                    ]);
 
+                                }
+                            }
+                        }
+                        $date = $dataPeriod[$aux]['mus']['week']['period']['year'].'-'.$dataPeriod[$aux]['mus']['week']['period']['week'];
+                        if(TopSemanalMusica::where(['musica_id'=>$data['id']])->where(['data_ref'=>$date])->exists()){
+                            // Top já existe
+                        }else{
+                            $musicaAux = (Musica::where(['idV'=>$data['id']])->first());
+                            // dd($musicaAux->artista->id)
+                            if(isset($musicaAux['id'])){
+                                TopSemanalMusica::create([
+                                    'musica_id' => $musicaAux['id'],
+                                    'artista_id' => $musicaAux->artista->id,
+                                    'data_ref' => $date,
+                                    'nome' => $data['name'],
+                                    'posicao' => $key + 1,
+                                    'views' => $data['views'],
+                                    'alcance' => 'nacional',
+                                ]);
                             }
                         }
                     }
-                    $date = $dataPeriod[$aux]['mus']['week']['period']['year'].'-'.$dataPeriod[$aux]['mus']['week']['period']['week'];
-                    if(TopSemanalMusica::where(['musica_id'=>$data['id']])->where(['data_ref'=>$date])->exists()){
-                        // Top já existe
-                    }else{
-                        $musicaAux = (Musica::where(['idV'=>$data['id']])->first());
-                        // dd($musicaAux->artista->id)
-                        if(isset($musicaAux['id'])){
-                            TopSemanalMusica::create([
-                                'musica_id' => $musicaAux['id'],
-                                'artista_id' => $musicaAux->artista->id,
-                                'data_ref' => $date,
-                                'nome' => $data['name'],
-                                'posicao' => $key + 1,
-                                'views' => $data['views'],
-                                'alcance' => 'nacional',
+                }
+                $aux++;
+            }
+
+        }elseif($request['tabela'] == 'top_semanal_album'){
+            foreach($dates as $period){
+                $dataPeriod[$aux] = (Http::get("https://api.vagalume.com.br/rank.php?apikey=660a4395f992ff67786584e238f501aa&type=alb&period=week&periodVal=$period&scope=all,lyrics&limit$limite"))->json();
+                if(isset($dataPeriod[$aux]['alb']['week']['all'])){
+                    foreach($dataPeriod[$aux]['alb']['week']['all'] as $key => $data){
+                        $artista = ((Http::get($data['art']['url'].'index.js'))->json())['artist'];
+                        if(Artista::where(['idV'=>$artista['id']])->exists()){
+                            // Artista já existe
+                            $artista = Artista::where(['idV'=>$artista['id']])->get();
+                        }else{
+                            $artistaCriado = Artista::create([
+                                'idV' => $artista['id'],
+                                'nome' => $artista['desc'],
+                                'imagem' => 'https://www.vagalume.com.br'.$artista['pic_small'],
+                                'url' => $artista['url'],
+                                'views' => $artista['rank']['views'],
                             ]);
+                        };
+                        if(isset($artista['albums']['item'])){
+                            foreach($artista['albums']['item'] as $album){
+                                if(Album::where(['idV'=>$album['id']])->exists()){
+                                    // Album já existe
+                                }else{
+                                    Album::create([
+                                        'idV' => $album['id'],
+                                        'artista_id' => $artistaCriado['id'],
+                                        'nome' => $album['desc'],
+                                        'url' => $album['url'],
+                                        'lancamento' => $album['year'],
+                                    ]);
+
+                                }
+                            }
+                        }
+                        $date = $dataPeriod[$aux]['alb']['week']['period']['year'].'-'.$dataPeriod[$aux]['alb']['week']['period']['week'];
+                        if(TopSemanalAlbum::where(['album_id'=>$data['id']])->where(['data_ref'=>$date])->exists()){
+                            // Top já existe
+                        }else{
+                            $albumAux = (Album::where(['idV'=>$data['id']])->first());
+                            // dd($albumAux->artista->id)
+                            if(isset($albumAux['id'])){
+                                TopSemanalAlbum::create([
+                                    'album_id' => $albumAux['id'],
+                                    'artista_id' => $albumAux->artista->id,
+                                    'data_ref' => $date,
+                                    'nome' => $data['name'],
+                                    'posicao' => $key + 1,
+                                    'views' => $data['views'],
+                                    'alcance' => 'nacional',
+                                ]);
+                            }
                         }
                     }
+
                 }
+                $aux++;
             }
-            $aux++;
+
+        }elseif($request['tabela'] == 'top_semanal_artista'){
+            foreach($dates as $period){
+                $dataPeriod[$aux] = (Http::get("https://api.vagalume.com.br/rank.php?apikey=660a4395f992ff67786584e238f501aa&type=art&period=week&periodVal=$period&scope=all,lyrics&limit$limite"))->json();
+                if(isset($dataPeriod[$aux]['art']['week']['all'])){
+                    foreach($dataPeriod[$aux]['art']['week']['all'] as $key => $data){
+                        $artista = ((Http::get($data['url'].'index.js'))->json())['artist'];
+                        if(Artista::where(['idV'=>$artista['id']])->exists()){
+                            // Artista já existe
+                            $artista = Artista::where(['idV'=>$artista['id']])->get();
+                        }else{
+                            $artistaCriado = Artista::create([
+                                'idV' => $artista['id'],
+                                'nome' => $artista['desc'],
+                                'imagem' => 'https://www.vagalume.com.br'.$artista['pic_small'],
+                                'url' => $artista['url'],
+                                'views' => $artista['rank']['views'],
+                            ]);
+                        };
+
+                        $date = $dataPeriod[$aux]['art']['week']['period']['year'].'-'.$dataPeriod[$aux]['art']['week']['period']['week'];
+                        if(TopSemanalArtista::where(['artista_id'=>$data['id']])->where(['data_ref'=>$date])->exists()){
+                            // Top já existe
+                        }else{
+                            $artistaAux = (Artista::where(['idV'=>$data['id']])->first());
+                            if(isset($artistaAux['id'])){
+                                TopSemanalArtista::create([
+                                    'artista_id' => $artistaAux['id'],
+                                    'data_ref' => $date,
+                                    'nome' => $data['name'],
+                                    'posicao' => $key + 1,
+                                    'views' => $data['views'],
+                                    'alcance' => 'nacional',
+                                ]);
+                            }
+                        }
+                    }
+
+                }
+                $aux++;
+            }
         }
+
+        return redirect(route('banco'));
+
     }
 
     public function relatorioCriar()

@@ -218,7 +218,6 @@
         </div>
     </div>
 
-@include('footer')
 @include('scripts')
     <script>
         function checkArtista(click){

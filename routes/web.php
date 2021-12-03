@@ -22,7 +22,7 @@ use App\Http\Controllers\Controller;
 Route::get('/', [Controller::class, 'dashboard']);
 Route::get('/popular', [Controller::class, 'popularPagina']);
 Route::post('/popular-banco', [Controller::class, 'popularBanco']);
-Route::get('/banco', [Controller::class, 'banco']);
+Route::get('/banco', [Controller::class, 'banco'])->name('banco');
 Route::get('/relatorio-criar', [Controller::class, 'relatorioCriar']);
 Route::post('/relatorio-post', [Controller::class, 'relatorioPost']);
 Route::get('/relatorios', [Controller::class, 'relatorios'])->name('relatorios');

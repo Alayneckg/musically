@@ -61,11 +61,11 @@ https://templatemo.com/tm-563-seo-dream
                 <!-- ***** Logo End ***** -->
                 <!-- ***** Menu Start ***** -->
                 <ul class="nav">
-                <li class="scroll-to-section"><a href="/" class="active">Home</a></li>
-                <li class="scroll-to-section"><a href="/relatorios">Relatorios</a></li>
-                <li class="scroll-to-section"><a href="/banco">Banco</a></li>
-                <li class="scroll-to-section"><a href="/sobre">Sobre</a></li>
-                <li class="scroll-to-section"><div class="main-blue-button"><a href="/relatorio-criar">Criar Relatório</a></div></li>
+                    <li class="scroll-to-section"><a href="/" class="active">Home</a></li>
+                    <li class="scroll-to-section"><a href="/relatorios">Relatorios</a></li>
+                    <li class="scroll-to-section"><a href="/banco">Banco</a></li>
+                    <li class="scroll-to-section"><a href="/sobre">Sobre</a></li>
+                    <li class="scroll-to-section"><div class="main-blue-button"><a href="/relatorio-criar">Criar Relatório</a></div></li>
                 </ul>
                 <a class='menu-trigger'>
                     <span>Menu</span>
