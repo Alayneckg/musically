@@ -25,16 +25,12 @@ class Controller extends BaseController
 
     public function dashboard()
     {
-
         return view('welcome');
-
     }
 
     public function popularPagina()
     {
-
         return view('popular');
-
     }
 
     public function popularBanco(Request $request)

@@ -18,7 +18,7 @@
 
     <div id="features" class="features section">
         <div class="container">
-            <div class="row">
+            <!-- <div class="row"> -->
                 <div class="col-lg-12">
                     <div class="features-content" >
                         <div class="row">
@@ -35,7 +35,6 @@
                                             <h4>Relatório {{ $relatorio['id'] }} </h4>
                                             <h6>Criado em {{ (new Datetime($relatorio['created_at']))->format('d/m/Y') }}</h6>
                                             <div class="line-dec"></div>
-                                            <!-- coluna_semanal_musica', 'coluna_semanal_artista', 'coluna_semanal_album', 'top_1_musica' -->
                                             @isset($relatorio['artista'])
                                                 <span style="font-weight: bold; color: teal;">{{ $relatorio['artista'] }}</span>
                                                 <small>Artista selecionado </small>
@@ -171,55 +170,10 @@
                                     </a>
                                 </div>
                             @endforeach
-                            <!-- <div class="col-lg-6">
-                                <a data-toggle="collapse" href="#collapseExample" role="button" aria-controls="collapseExample">
-                                    <div class="features-item first-feature wow fadeInUp" data-wow-duration="1s" data-wow-delay="0s">
-                                        <div class="icon"></div>
-                                        <h4>Reach Out</h4>
-                                        <div class="line-dec"></div>
-
-                                        <p>This HTML5 template is based on Bootstrap 5 CSS. You are free to customize anything.</p>
-                                        <div class="collapse" id="collapseExample">
-                                            <br>
-                                            <hr>
-                                            <br>
-                                            <div >
-                                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
-                                            </div>
-                                        </div>
-                                        <br>
-                                        <br>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="features-item second-feature wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
-                                    <div class="icon"></div>
-                                    <h4>Develop a Strategy</h4>
-                                    <div class="line-dec"></div>
-                                    <p>Lorem ipsum dolor sit ameter consectetur adipiscing li elit sed do eiusmod.</p>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="features-item first-feature wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.4s">
-                                    <div class="icon"></div>
-                                    <h4>Implementation</h4>
-                                    <div class="line-dec"></div>
-                                    <p>If this template is useful for your website, please consider to <a rel="nofollow" href="https://www.paypal.me/templatemo" target="_blank">support us</a> a little.</p>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="features-item second-feature last-features-item wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.6s">
-                                    <div class="icon"></div>
-                                    <h4>Analyze the result</h4>
-                                    <div class="line-dec"></div>
-                                    <p>Below circular progress bar animation supports those CSS values 10, 20, 30, till 100.</p>
-                                </div>
-                            </div> -->
                         </div>
                     </div>
                 </div>
-            </div>
+            <!-- </div> -->
         </div>
     </div>
 
@@ -301,7 +255,7 @@
                     }]
                 }
 
-                });
+            });
         @endisset
         @isset($relatorio['grafico_album'])
             Highcharts.chart('container-album-{{$relatorio["id"]}}', {
